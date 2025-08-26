@@ -1,0 +1,212 @@
+#ifndef COLORS_H
+
+#define COLORS_H
+
+const int screen_width = 800;
+const int screen_height = 800;
+
+struct Color{
+	int r, g, b;
+};
+
+Color c[5] = { { 255, 0, 0 }, { 0, 255, 0 }, { 0, 0, 255 }, { 255, 255, 0 }, { 255, 0, 255 } };
+
+int randomIndex(int n){
+	return (rand() % n);
+}
+
+#endif
+
+#ifndef SQUARE_H
+
+#define SQUARE_H
+#include "color.h"
+
+const int squareSize = 100;
+
+struct Square{
+	int rx;
+	int ry;
+	Color color;
+
+	Square(){
+
+	}
+
+	void setPosition(int px, int py){
+		this->rx = px;
+		this->ry = py;
+	}
+
+	void randomcolor(){
+		this->color = c[randomIndex(5)];
+	}
+
+	void draw(){
+		iSetColor(color.r, color.g, color.b);
+		iFilledRectangle(rx, ry, squareSize, squareSize);
+	}
+
+	bool isClicked(int mx, int my){
+		if (mx >= rx && mx <= rx + squareSize && my >= ry && my <= ry + squareSize){
+			return true;
+		}
+		return false;
+	}
+};
+
+
+#endif
+
+#include "iGraphics.h"
+#include "square.h"
+#include "color.h"
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Idraw Here::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::://
+
+Square top[4];
+Square bottom;
+int score = 0;
+int miss = 0;
+char scoretext[100];
+
+void initializesquares(){
+	for (int i = 0; i < 4; i++){
+		top[i].setPosition(100 + i * 150, screen_height - 200);
+		top[i].randomcolor();
+	}
+
+	bottom.setPosition(((screen_width - squareSize) / 2), 100);
+	bottom.randomcolor();
+}
+
+void changecolor(){
+	for (int i = 0; i < 4; i++){
+		top[i].randomcolor();
+	}
+	bottom.randomcolor();
+}
+
+void iDraw()
+{
+	iClear();
+
+	iSetColor(255, 255, 255);
+	iFilledRectangle(0, 0, screen_width, screen_height);
+
+	for (int i = 0; i < 4; i++){
+		top[i].draw();
+	}
+	bottom.draw();
+
+	iSetColor(0, 0, 0);
+	sprintf_s(scoretext, "Score: %d", score);
+	iText(screen_width - 200, screen_height - 50, scoretext, GLUT_BITMAP_HELVETICA_18);
+	sprintf_s(scoretext, "MISS: %d", miss);
+	iText(screen_width - 200, screen_height - 100, scoretext, GLUT_BITMAP_HELVETICA_18);
+
+
+}
+
+
+
+
+
+/*function iMouseMove() is called when the user presses and drags the mouse.
+(mx, my) is the position where the mouse pointer is.
+*/
+
+
+void iMouseMove(int mx, int my)
+{
+	
+}
+//*******************************************************************ipassiveMouse***********************************************************************//
+void iPassiveMouseMove(int mx, int my)
+{
+	
+}
+
+void iMouse(int button, int state, int mx, int my)
+{
+	
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{
+		for (int i = 0; i < 4; i++){
+			if (top[i].isClicked(mx, my)){
+				if (top[i].color.r == bottom.color.r &&
+					top[i].color.g == bottom.color.g &&
+					top[i].color.b == bottom.color.b){
+					score++;
+				}
+				else{
+					miss++;
+				}
+			}
+		}
+		
+	}
+	
+	
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+	{
+		
+	}
+}
+
+/*
+function iKeyboard() is called whenever the user hits a key in keyboard.
+key- holds the ASCII value of the key pressed.
+*/
+
+
+void iKeyboard(unsigned char key)
+{
+	if (key == '\r')
+	{
+		
+	}
+	
+	
+}
+
+/*
+function iSpecialKeyboard() is called whenver user hits special keys like-
+function keys, home, end, pg up, pg down, arraows etc. you have to use
+appropriate constants to detect them. A list is:
+GLUT_KEY_F1, GLUT_KEY_F2, GLUT_KEY_F3, GLUT_KEY_F4, GLUT_KEY_F5, GLUT_KEY_F6,
+GLUT_KEY_F7, GLUT_KEY_F8, GLUT_KEY_F9, GLUT_KEY_F10, GLUT_KEY_F11, GLUT_KEY_F12,
+GLUT_KEY_LEFT, GLUT_KEY_UP, GLUT_KEY_RIGHT, GLUT_KEY_DOWN, GLUT_KEY_PAGE UP,
+GLUT_KEY_PAGE DOWN, GLUT_KEY_HOME, GLUT_KEY_END, GLUT_KEY_INSERT
+*/
+void iSpecialKeyboard(unsigned char key)
+{
+
+	
+	if (key == GLUT_KEY_RIGHT)
+	{
+				
+	}
+	if (key == GLUT_KEY_LEFT)
+	{
+		
+	}
+	
+	if (key == GLUT_KEY_HOME)
+	{
+		
+	}
+	
+}
+
+
+int main()
+{
+	initializesquares();
+	iSetTimer(2000, changecolor);
+	srand((unsigned)time(NULL));
+	
+	iInitialize(screen_width,screen_height, "Project Title");
+	///updated see the documentations
+	iStart();
+	return 0;
+}
